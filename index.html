@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <title>words-slot Demo</title>
+    </head>
+    <script language="JavaScript">
+        var time1;
+        var time2;
+        var time3;
+        var words1 = [
+            "hoge","huga","moge","foo","var"
+        ];
+        var words2 = [
+            "AWS","Azure","GCP","Openshift"
+        ];
+        var words3 = [
+            "Java","Node.js","Kotlin","React native","AngulerJS","GraphQL"
+        ];
+        
+        // START
+        function start() {
+            start1();
+            start2();
+            start3();
+        }
+        
+        //各ランダム値を表示
+        function start1() {
+            document.getElementById("dat1").value = words1[Math.floor(Math.random()*words1.length)];
+            time1 = setTimeout(start1,  10);
+        }
+        function start2() {
+            document.getElementById("dat2").value = words2[Math.floor(Math.random()*words2.length)];
+            time2 = setTimeout(start2,  10);
+        }
+        function start3() {
+            document.getElementById("dat3").value = words3[Math.floor(Math.random()*words3.length)];
+            time3 = setTimeout(start3,  10);
+        }
+        
+        // STOP
+        function stop() {
+            clearTimeout(time1);
+            setTimeout(function() {clearTimeout(time2);}, 1000);
+            setTimeout(function() {clearTimeout(time3);}, 2000);
+        }
+        function fetchJsonData() {
+            var targetUrl = document.getElementById("outer-json-url").value;
+            fetch(targetUrl).then(function(response) {
+                return response.text();
+            }).then(function(text) {
+                var outerData = JSON.parse(text);
+                words1 = outerData[0];
+                words2 = outerData[1];
+                words3 = outerData[2];
+            });
+            document.getElementById("fetch-result").innerText = "fetch."
+        }
+    </script>
+        
+    <style>
+    table, tr, td{
+        border-style:none;
+    }
+    </style>
+    
+    <body>
+        <div>
+            Outer Data(JSON) URL:
+            <input type="text" id="outer-json-url" value="" style="width: 40%">
+            <input type="button" value="fetch" onclick="fetchJsonData()">
+            <br>
+            <span id="fetch-result"></span>
+        </div>
+        <div style="background-color : #CCC; padding : 20px;">
+            <input type="button" value="START" onclick="start()" style="width:100%;">
+            <p>
+                <input type="text" id="dat1" value="-" style="width:100%;text-align:center;font-size:30px">
+                <input type="text" id="dat2" value="-" style="width:100%;text-align:center;font-size:30px">
+                <input type="text" id="dat3" value="-" style="width:100%;text-align:center;font-size:30px">    
+            </p>
+            <input type="button" value="STOP" onclick="stop()" style="width:100%;">
+        </div>
+        <div id="result-area"></div>
+    </body>
+</html>
+ 
