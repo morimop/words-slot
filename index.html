@@ -1,68 +1,81 @@
-<html>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
     <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <META http-equiv="Content-Script-Type" content="text/javascript">
         <title>words-slot Demo</title>
+        <script type="text/javascript" language="JavaScript">
+            var time1;
+            var time2;
+            var time3;
+            var words1 = [
+                "hoge","huga","moge","foo","var"
+            ];
+            var words2 = [
+                "AWS","Azure","GCP","Openshift"
+            ];
+            var words3 = [
+                "Java","Node.js","Kotlin","React native","AngulerJS","GraphQL"
+            ];
+            
+            // START
+            function start() {
+                start1();
+                start2();
+                start3();
+            }
+            
+            //各ランダム値を表示
+            function start1() {
+                document.getElementById("dat1").value = words1[Math.floor(Math.random()*words1.length)];
+                time1 = setTimeout(start1,  10);
+            }
+            function start2() {
+                document.getElementById("dat2").value = words2[Math.floor(Math.random()*words2.length)];
+                time2 = setTimeout(start2,  10);
+            }
+            function start3() {
+                document.getElementById("dat3").value = words3[Math.floor(Math.random()*words3.length)];
+                time3 = setTimeout(start3,  10);
+            }
+            
+            // STOP
+            function stop() {
+                clearTimeout(time1);
+                setTimeout(function() {clearTimeout(time2);}, 1000);
+                setTimeout(function() {
+                        clearTimeout(time3);
+                        showSubject();
+                    }, 2000);
+            }
+            function showSubject() {
+                var subjectText = document.getElementById("dat1").value +
+                    ":" + document.getElementById("dat2").value +
+                    ":" + document.getElementById("dat3").value;
+                var newLi = document.createElement("li");
+                newLi.innerText = subjectText;
+                document.getElementById("result-ol").appendChild(newLi);
+            }
+            function fetchJsonData() {
+                var targetUrl = document.getElementById("outer-json-url").value;
+                fetch(targetUrl).then(function(response) {
+                    return response.text();
+                }).then(function(text) {
+                    var outerData = JSON.parse(text);
+                    words1 = outerData[0];
+                    words2 = outerData[1];
+                    words3 = outerData[2];
+                    document.getElementById("fetch-result").innerText = "fetch.words1:" + words1.length +
+                    ", words2:" + words2.length + ", words3:" + words3.length 
+                });
+            }
+        </script>
+        <style type="text/css">
+            table, tr, td{
+                border-style:none;
+            }
+        </style>
     </head>
-    <script language="JavaScript">
-        var time1;
-        var time2;
-        var time3;
-        var words1 = [
-            "hoge","huga","moge","foo","var"
-        ];
-        var words2 = [
-            "AWS","Azure","GCP","Openshift"
-        ];
-        var words3 = [
-            "Java","Node.js","Kotlin","React native","AngulerJS","GraphQL"
-        ];
-        
-        // START
-        function start() {
-            start1();
-            start2();
-            start3();
-        }
-        
-        //各ランダム値を表示
-        function start1() {
-            document.getElementById("dat1").value = words1[Math.floor(Math.random()*words1.length)];
-            time1 = setTimeout(start1,  10);
-        }
-        function start2() {
-            document.getElementById("dat2").value = words2[Math.floor(Math.random()*words2.length)];
-            time2 = setTimeout(start2,  10);
-        }
-        function start3() {
-            document.getElementById("dat3").value = words3[Math.floor(Math.random()*words3.length)];
-            time3 = setTimeout(start3,  10);
-        }
-        
-        // STOP
-        function stop() {
-            clearTimeout(time1);
-            setTimeout(function() {clearTimeout(time2);}, 1000);
-            setTimeout(function() {clearTimeout(time3);}, 2000);
-        }
-        function fetchJsonData() {
-            var targetUrl = document.getElementById("outer-json-url").value;
-            fetch(targetUrl).then(function(response) {
-                return response.text();
-            }).then(function(text) {
-                var outerData = JSON.parse(text);
-                words1 = outerData[0];
-                words2 = outerData[1];
-                words3 = outerData[2];
-            });
-            document.getElementById("fetch-result").innerText = "fetch."
-        }
-    </script>
-        
-    <style>
-    table, tr, td{
-        border-style:none;
-    }
-    </style>
-    
     <body>
         <div>
             Outer Data(JSON) URL:
@@ -80,7 +93,9 @@
             </p>
             <input type="button" value="STOP" onclick="stop()" style="width:100%;">
         </div>
-        <div id="result-area"></div>
+        <div id="result-area">
+            <ol id="result-ol"></ol>
+        </div>
     </body>
 </html>
  
