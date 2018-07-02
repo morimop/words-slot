@@ -17,6 +17,8 @@
             var words3 = [
                 "Java","Node.js","Kotlin","React native","AngulerJS","GraphQL"
             ];
+            var resTexts = [];
+            const storageKey = "word-slot-results";
             
             // START
             function start() {
@@ -54,9 +56,12 @@
                     ":" + document.getElementById("dat3").value;
                 var newLi = document.createElement("li");
                 newLi.innerText = subjectText;
+                resTexts.push(subjectText);
+                localStorage.setItem(storageKey,JSON.stringify(resTexts));
                 document.getElementById("result-ol").appendChild(newLi);
             }
             function fetchJsonData() {
+                document.getElementById("fetch-result").innerText = "fetching...";
                 var targetUrl = document.getElementById("outer-json-url").value;
                 fetch(targetUrl).then(function(response) {
                     return response.text();
@@ -65,9 +70,27 @@
                     words1 = outerData[0];
                     words2 = outerData[1];
                     words3 = outerData[2];
-                    document.getElementById("fetch-result").innerText = "fetch.words1:" + words1.length +
+                    document.getElementById("fetch-result").innerText = "fetched! words1:" + words1.length +
                     ", words2:" + words2.length + ", words3:" + words3.length 
                 });
+            }
+            function init() {
+                var params = document.location.href.split("?");
+                if (params.length > 1) {
+                    document.getElementById("outer-json-url").value = decodeURIComponent(params[1]);
+                    fetchJsonData();
+                }
+                if (localStorage && localStorage.getItem(storageKey)) {
+                    resTexts = JSON.parse(localStorage.getItem(storageKey));
+                    resTexts.forEach(resText => {
+                        var newLi = document.createElement("li");
+                        newLi.innerText = resText;
+                        document.getElementById("result-ol").appendChild(newLi);
+                    });
+                }
+            }
+            function resetResult() {
+                localStorage.removeItem(storageKey);
             }
         </script>
         <style type="text/css">
@@ -76,25 +99,28 @@
             }
         </style>
     </head>
-    <body>
+    <body onload="init();">
         <div>
             Outer Data(JSON) URL:
-            <input type="text" id="outer-json-url" value="" style="width: 40%">
-            <input type="button" value="fetch" onclick="fetchJsonData()">
+            <input type="text" id="outer-json-url" value="" style="width: 70%">
+            <input type="button" value="fetch" onclick="fetchJsonData();">
             <br>
             <span id="fetch-result"></span>
         </div>
         <div style="background-color : #CCC; padding : 20px;">
-            <input type="button" value="START" onclick="start()" style="width:100%;">
+            <input type="button" value="START" onclick="start()" style="width:100%;height: 40px">
             <p>
                 <input type="text" id="dat1" value="-" style="width:100%;text-align:center;font-size:30px">
                 <input type="text" id="dat2" value="-" style="width:100%;text-align:center;font-size:30px">
                 <input type="text" id="dat3" value="-" style="width:100%;text-align:center;font-size:30px">    
             </p>
-            <input type="button" value="STOP" onclick="stop()" style="width:100%;">
+            <input type="button" value="STOP" onclick="stop()" style="width:100%;height: 40px">
         </div>
         <div id="result-area">
             <ol id="result-ol"></ol>
+        </div>
+        <div>
+            <input type="button" value="reset result" onclick="resetResult();">
         </div>
     </body>
 </html>
