@@ -22,6 +22,8 @@
             
             // START
             function start() {
+                document.getElementById("start-btn").disabled=true;
+                document.getElementById("stop-btn").disabled=false;
                 start1();
                 start2();
                 start3();
@@ -43,11 +45,13 @@
             
             // STOP
             function stop() {
+                document.getElementById("stop-btn").disabled=true;
                 clearTimeout(time1);
                 setTimeout(function() {clearTimeout(time2);}, 1000);
                 setTimeout(function() {
                         clearTimeout(time3);
                         showSubject();
+                        document.getElementById("start-btn").disabled=false;
                     }, 2000);
             }
             function showSubject() {
@@ -75,6 +79,7 @@
                 });
             }
             function init() {
+                document.getElementById("stop-btn").disabled=true;
                 var params = document.location.href.split("?");
                 if (params.length > 1) {
                     document.getElementById("outer-json-url").value = decodeURIComponent(params[1]);
@@ -108,13 +113,13 @@
             <span id="fetch-result"></span>
         </div>
         <div style="background-color : #CCC; padding : 20px;">
-            <input type="button" value="START" onclick="start()" style="width:100%;height: 40px">
+            <input id="start-btn" type="button" value="START" onclick="start()" style="width:100%;height: 40px">
             <p>
                 <input type="text" id="dat1" value="-" style="width:100%;text-align:center;font-size:30px">
                 <input type="text" id="dat2" value="-" style="width:100%;text-align:center;font-size:30px">
                 <input type="text" id="dat3" value="-" style="width:100%;text-align:center;font-size:30px">    
             </p>
-            <input type="button" value="STOP" onclick="stop()" style="width:100%;height: 40px">
+            <input id="stop-btn" type="button" value="STOP" onclick="stop()" style="width:100%;height: 40px">
         </div>
         <div id="result-area">
             <ol id="result-ol"></ol>
